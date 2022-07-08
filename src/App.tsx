@@ -11,6 +11,7 @@ import logo from './logo.svg';
 import './App.css';
 
 interface Hoge {
+  selectedDate: string
   value: number
 }
 
@@ -18,13 +19,20 @@ const App = () => {
   return <Counter />
 }
 
+// yyyy-mm-dd形式の文字列を返す
+const dateFormat = (d: Date) => {
+  return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`.replace(/\n|\r/g, '');
+}
+
 class Counter extends React.Component<{}, Hoge>
 {
   constructor(props: any)
   {
     super(props);
+    const currentDate = new Date()
     this.state = {
-      value : 0
+      selectedDate: dateFormat(currentDate),
+      value: 0
     } as Hoge
   }
 
@@ -49,14 +57,15 @@ class Counter extends React.Component<{}, Hoge>
           initialView="dayGridMonth" 
           locales={[jaLocale]}
           locale='ja'
-          dateClick={(arg) => alert(arg.dateStr)}
+          dateClick={(arg) => this.setState({ selectedDate: arg.dateStr})}
         />
-        <div>
-          カウント値：{this.state.value}
-        </div>
-        <Stack direction="row" spacing={2}>
-          <Button variant="contained" color="primary" onClick={this.onIncrement}>+</Button>
-          <Button variant="contained" color="primary" onClick={this.onDecrement}>-</Button>
+        <Stack direction="column" spacing={1}>
+          <div>日付：{this.state.selectedDate}</div>
+          <div>カウント値：{this.state.value}</div>
+          <Stack direction="row" spacing={2}>
+            <Button variant="contained" color="primary" onClick={this.onIncrement}>+</Button>
+            <Button variant="contained" color="primary" onClick={this.onDecrement}>-</Button>
+          </Stack>
         </Stack>
       </div>
     );
