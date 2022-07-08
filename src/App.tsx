@@ -1,4 +1,5 @@
 import React from 'react';
+import {Stack, Button} from '@mui/material'
 import logo from './logo.svg';
 import './App.css';
 
@@ -39,10 +40,10 @@ class Counter extends React.Component<{}, Hoge>
         <div>
           カウント値：{this.state.value}
         </div>
-        <div>
-          <button type="button" onClick={this.onIncrement}>+</button>
-          <button type="button" onClick={this.onDecrement}>-</button>
-        </div>
+        <Stack direction="row" spacing={2}>
+          <Button variant="contained" color="primary" onClick={this.onIncrement}>+</Button>
+          <Button variant="contained" color="primary" onClick={this.onDecrement}>-</Button>
+        </Stack>
       </div>
     );
   }
