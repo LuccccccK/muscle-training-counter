@@ -1,8 +1,12 @@
 import React from 'react';
 import {Stack, Button} from '@mui/material'
+
+// fullcalendar module import
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import jaLocale from '@fullcalendar/core/locales/ja'; 
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -40,11 +44,12 @@ class Counter extends React.Component<{}, Hoge>
   {
     return (
       <div>
-        <FullCalendar 
-          plugins={[dayGridPlugin]} 
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin]} // 日付単位での表示、日付に対するinteraction実現
           initialView="dayGridMonth" 
           locales={[jaLocale]}
           locale='ja'
+          dateClick={(arg) => alert(arg.dateStr)}
         />
         <div>
           カウント値：{this.state.value}
