@@ -1,20 +1,20 @@
 # README
 
-1. Route53 にホストゾーンを作成
+1. Route53 にサブドメインのホストゾーンを作成
 
     ```sh
-    aws cloudformation create-stack --stack-name MtcCfnRoute53 --template-body file://mtc-cfn-route53.yaml
-    # aws cloudformation delete-stack --stack-name MtcCfnRoute53
+    aws cloudformation create-stack --stack-name MtcCfnRoute53ForSubDomain --template-body file://mtc-cfn-route53-for-subdomain.yaml
+    # aws cloudformation delete-stack --stack-name MtcCfnRoute53ForSubDomain
     ```
 
 1. 作成したホストゾーンのNSレコードの値をコピーして、委任先の親ドメインのNSレコードとして登録（手作業）
 
     参考URL: `https://note.com/dafujii/n/n352e3d07dcfd`
 
-1. 作成したホストゾーンのIDを取得し、mtc-cfn-acm-parameters.json を更新
+1. 作成したホストゾーンのIDを取得し、mtc-cfn-acm-parameters.json / mtc-cfn-web-parameters.json を更新
 
     ```sh
-    aws cloudformation describe-stacks --stack-name MtcCfnRoute53 | jq -r '.Stacks[].Outputs[0].OutputValue'
+    aws cloudformation describe-stacks --stack-name MtcCfnRoute53ForSubDomain | jq -r '.Stacks[].Outputs[0].OutputValue'
     ```
 
 1. ACMを登録
