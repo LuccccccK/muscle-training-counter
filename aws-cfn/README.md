@@ -27,3 +27,9 @@
         --parameter file://mtc-cfn-acm-parameters.json \
         --region us-east-1
     ```
+
+1. S3 Bucket / CloudFront Distribution を構築
+
+    ```sh
+    aws cloudformation create-stack --stack-name MtcCfnWeb --template-body file://mtc-cfn-web.yaml
+    ```

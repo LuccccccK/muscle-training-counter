@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  # CloudFront Origin Access Identity
+  OAI:
+    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: OAIConfig
+  # S3 Bucket Create
+  S3BucketForOrigin:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: s3-mtc-haba-link
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - Authorization
+              - Content-Length
+            AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - '*'
+            MaxAge: 3000
+  # S3 Bucket Policy Create
+  S3BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    DependsOn: OAI
+    Properties:
+      Bucket: !Ref S3BucketForOrigin
+      PolicyDocument:
+        Statement:
+          - Sid: APIReadForGetBucketObjects
+            Effect: Allow
+            Action: 's3:GetObject'
+            Principal:
+              AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OAI}
+            Resource: !Sub arn:aws:s3:::${S3BucketForOrigin}/*
+
+Outputs:
+  OAI:
+    Value: !Ref OAI
+  S3BucketForOrigin:
+    Value: !Ref S3BucketForOrigin
