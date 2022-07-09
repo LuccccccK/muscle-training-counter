@@ -1,14 +1,14 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Resources:
-  # Route53 Hosted Zone
-  Route53HostedZone:
-    Type: AWS::Route53::HostedZone
+  # DNS Record Create
+  CloudFrontDNSRecord:
+    Type: 'AWS::Route53::RecordSetGroup'
     Properties:
-      Name: mtc.haba.link
-
-Outputs:
-  HostedZoneId:
-    Value: !Ref Route53HostedZone
-    Export: 
-      Name: !Sub ${AWS::StackName}-HostedZoneId
+      HostedZoneId: !ImportValue MtcCfnRoute53ForSubDomain-HostedZoneId
+      RecordSets:
+        - Name: mtc.haba.link # SubDomain Name
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2 # CloudFront.netのホストゾーンIDを指定する必要あり
+            DNSName: !ImportValue MtcCfnWeb-DomainName

@@ -43,3 +43,10 @@
     # aws cloudformation update-stack --stack-name MtcCfnWeb --template-body file://mtc-cfn-web.yaml --parameter file://mtc-cfn-web-parameters.json
     # aws cloudformation delete-stack --stack-name MtcCfnWeb
     ```
+
+1. サブドメインのホストゾーンにCloudFront DistributionのドメインをAレコードとして登録
+
+    ```sh
+    aws cloudformation create-stack --stack-name MtcCfnRoute53 --template-body file://mtc-cfn-route53.yaml
+    # aws cloudformation delete-stack --stack-name MtcCfnRoute53
+    ```
