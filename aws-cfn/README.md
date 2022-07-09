@@ -4,6 +4,7 @@
 
     ```sh
     aws cloudformation create-stack --stack-name MtcCfnRoute53ForSubDomain --template-body file://mtc-cfn-route53-for-subdomain.yaml
+    # aws cloudformation update-stack --stack-name MtcCfnRoute53ForSubDomain --template-body file://mtc-cfn-route53-for-subdomain.yaml
     # aws cloudformation delete-stack --stack-name MtcCfnRoute53ForSubDomain
     ```
 
@@ -26,10 +27,19 @@
         --template-body file://mtc-cfn-acm.yaml \
         --parameter file://mtc-cfn-acm-parameters.json \
         --region us-east-1
+    # aws cloudformation delete-stack --stack-name MtcCfnACM --region us-east-1
+    ```
+
+1. 作成したACMのARNを取得し、mtc-cfn-web-parameters.json を更新
+
+    ```sh
+    aws cloudformation describe-stacks --stack-name MtcCfnACM --region us-east-1 | jq -r '.Stacks[].Outputs[0].OutputValue'
     ```
 
 1. S3 Bucket / CloudFront Distribution を構築
 
     ```sh
-    aws cloudformation create-stack --stack-name MtcCfnWeb --template-body file://mtc-cfn-web.yaml
+    aws cloudformation create-stack --stack-name MtcCfnWeb --template-body file://mtc-cfn-web.yaml --parameter file://mtc-cfn-web-parameters.json
+    # aws cloudformation update-stack --stack-name MtcCfnWeb --template-body file://mtc-cfn-web.yaml --parameter file://mtc-cfn-web-parameters.json
+    # aws cloudformation delete-stack --stack-name MtcCfnWeb
     ```

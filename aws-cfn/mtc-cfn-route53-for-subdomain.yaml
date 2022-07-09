@@ -12,7 +12,3 @@ Outputs:
     Value: !Ref Route53HostedZone
     Export: 
       Name: !Sub ${AWS::StackName}-HostedZoneId
-  DomainName:
-    Value: !Ref Route53HostedZone
-    Export: 
-      Name: !Sub ${AWS::StackName}-DomainName

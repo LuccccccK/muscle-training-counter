@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
+Parameters:
+  CertificateARN:
+    Type: String
+
 Resources:
   # CloudFront Origin Access Identity
   OAI:
@@ -36,9 +40,47 @@ Resources:
             Principal:
               AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OAI}
             Resource: !Sub arn:aws:s3:::${S3BucketForOrigin}/*
+  # CloudFront Distribution Create
+  CloudFrontDistribution:
+    Type: 'AWS::CloudFront::Distribution'
+    DependsOn:
+      - S3BucketForOrigin
+      - OAI
+    Properties:
+      DistributionConfig:
+        Aliases: 
+          - mtc.haba.link
+        HttpVersion: http2
+        Origins:
+          - DomainName: !GetAtt S3BucketForOrigin.DomainName
+            Id: !Sub S3bucketForOrigin
+            S3OriginConfig:
+              OriginAccessIdentity: !Join
+                - ''
+                - - 'origin-access-identity/cloudfront/'
+                  - !Ref OAI
+        Enabled: true
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          TargetOriginId: S3bucketForOrigin
+          ForwardedValues: 
+            QueryString: false
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        ViewerCertificate:
+          AcmCertificateArn: !Sub ${CertificateARN}
+          MinimumProtocolVersion: TLSv1
+          SslSupportMethod: sni-only
 
 Outputs:
-  OAI:
-    Value: !Ref OAI
-  S3BucketForOrigin:
+  BucketName:
     Value: !Ref S3BucketForOrigin
+    Export: 
+      Name: !Sub ${AWS::StackName}-BucketName
+  DomainName:
+    Value: !GetAtt CloudFrontDistribution.DomainName
+    Export: 
+      Name: !Sub ${AWS::StackName}-DomainName
