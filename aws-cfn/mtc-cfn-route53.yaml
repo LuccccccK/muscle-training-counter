@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  # Route53 Hosted Zone
+  Route53HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: mtc.haba.link
+
+Outputs:
+  HostedZoneId:
+    Value: !Ref Route53HostedZone
+    Export: 
+      Name: !Sub ${AWS::StackName}-HostedZoneId

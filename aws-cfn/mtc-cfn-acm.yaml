@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  HostedZoneId:
+    Type: String
+    Default: ZXXXXXXXXXXXXXXXXXXXX
+
+Resources:
+  ACM:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: mtc.haba.link
+      DomainValidationOptions:
+        - DomainName: mtc.haba.link
+          HostedZoneId: !Ref HostedZoneId
+      ValidationMethod: DNS
+
+Outputs:
+  ACMCertificateARN:
+    Value: !Ref ACM
+    Export:
+      Name: !Sub ${AWS::StackName}-CertificateARN

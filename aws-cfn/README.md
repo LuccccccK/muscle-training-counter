@@ -1,0 +1,29 @@
+# README
+
+1. Route53 にホストゾーンを作成
+
+    ```sh
+    aws cloudformation create-stack --stack-name MtcCfnRoute53 --template-body file://mtc-cfn-route53.yaml
+    # aws cloudformation delete-stack --stack-name MtcCfnRoute53
+    ```
+
+1. 作成したホストゾーンのNSレコードの値をコピーして、委任先の親ドメインのNSレコードとして登録（手作業）
+
+    参考URL: `https://note.com/dafujii/n/n352e3d07dcfd`
+
+1. 作成したホストゾーンのIDを取得し、mtc-cfn-acm-parameters.json を更新
+
+    ```sh
+    aws cloudformation describe-stacks --stack-name MtcCfnRoute53 | jq -r '.Stacks[].Outputs[0].OutputValue'
+    ```
+
+1. ACMを登録
+
+    ```sh
+    # 証明書はCloudFrontがデプロイされるバージニア北部にリソースが存在する必要があるため、明示的にregionを指定
+    aws cloudformation create-stack \
+        --stack-name MtcCfnACM \
+        --template-body file://mtc-cfn-acm.yaml \
+        --parameter file://mtc-cfn-acm-parameters.json \
+        --region us-east-1
+    ```
