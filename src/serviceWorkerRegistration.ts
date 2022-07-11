@@ -61,6 +61,11 @@ function registerValidSW(swUrl: string, config?: Config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
+      // アップデートボタンを押される前にページをリロードされた場合でも、
+      // アップデートボタンを押すか新しいSWがactivateされるまで、更新ダイアログを表示し続ける
+      if (registration.waiting && config && config.onUpdate) {
+          config.onUpdate(registration);
+      }
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
