@@ -1,5 +1,5 @@
 import React from 'react';
-import {Stack, Button} from '@mui/material'
+import {Stack, Button, ButtonGroup} from '@mui/material'
 
 // fullcalendar module import
 import FullCalendar from '@fullcalendar/react';
@@ -12,7 +12,9 @@ import './App.css';
 
 interface Hoge {
   selectedDate: string
-  value: number
+  countPushUp: number
+  countAbdominalMuscles: number
+  countSquat: number
 }
 
 const App = () => {
@@ -32,20 +34,10 @@ class Counter extends React.Component<{}, Hoge>
     const currentDate = new Date()
     this.state = {
       selectedDate: dateFormat(currentDate),
-      value: 0
+      countPushUp: 0,
+      countAbdominalMuscles: 0,
+      countSquat: 0
     } as Hoge
-  }
-
-  //インクリメントする関数
-  onIncrement = () => {
-    //setStateでstateの値を更新します
-    this.setState({ value : this.state.value + 1});
-  }
-
-  //デクリメントする関数
-  onDecrement = () => {
-    //setStateでstateの値を更新します
-    this.setState({ value : this.state.value - 1});
   }
 
   render()
@@ -59,13 +51,43 @@ class Counter extends React.Component<{}, Hoge>
           locale='ja'
           dateClick={(arg) => this.setState({ selectedDate: arg.dateStr})}
         />
-        <Stack direction="column" spacing={1}>
+        <Stack direction="column" spacing={1} m={2}>
           <div>日付：{this.state.selectedDate}</div>
-          <div>カウント値：{this.state.value}</div>
           <Stack direction="row" spacing={2}>
-            <Button variant="contained" color="primary" onClick={this.onIncrement}>+</Button>
-            <Button variant="contained" color="primary" onClick={this.onDecrement}>-</Button>
+            <div>腕立て伏せ：{this.state.countPushUp}</div>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group">
+              <Button 
+                onClick={() => this.setState({ countPushUp : this.state.countPushUp + 1})}
+              >+1</Button>
+              <Button 
+                onClick={() => this.setState({ countPushUp : this.state.countPushUp - 1})}
+              >-1</Button>
+            </ButtonGroup>
           </Stack>
+          <Stack direction="row" spacing={2}>
+            {/* Todo: 並べ方が汚い... Grid を使うとよさそう */}
+            <div>　　　腹筋：{this.state.countAbdominalMuscles}</div>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group">
+              <Button 
+                onClick={() => this.setState({ countAbdominalMuscles : this.state.countAbdominalMuscles + 1})}
+              >+1</Button>
+              <Button 
+                onClick={() => this.setState({ countAbdominalMuscles : this.state.countAbdominalMuscles - 1})}
+              >-1</Button>
+            </ButtonGroup>
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <div>スクワット：{this.state.countSquat}</div>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group">
+              <Button 
+                onClick={() => this.setState({ countSquat : this.state.countSquat + 1})}
+              >+1</Button>
+              <Button 
+                onClick={() => this.setState({ countSquat : this.state.countSquat - 1})}
+              >-1</Button>
+            </ButtonGroup>
+          </Stack>
+          <Button variant="contained" color="primary" onClick={() => alert('Todo: Save Methods')}>Save</Button>
         </Stack>
       </div>
     );
