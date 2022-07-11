@@ -4,40 +4,61 @@ import {Stack, Button, ButtonGroup} from '@mui/material'
 // fullcalendar module import
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import jaLocale from '@fullcalendar/core/locales/ja'; 
 
 import logo from './logo.svg';
 import './App.css';
 
-interface Hoge {
+// Counter Classで利用するState 定義
+interface StateCounter {
   selectedDate: string
   countPushUp: number
   countAbdominalMuscles: number
   countSquat: number
 }
 
+const makeInitailState = (d: string) => {
+  return {
+    selectedDate: d,
+    countPushUp: 0,
+    countAbdominalMuscles: 0,
+    countSquat: 0
+  } as StateCounter
+}
+
 const App = () => {
   return <Counter />
 }
 
+// Todo: Utility化
 // yyyy-mm-dd形式の文字列を返す
 const dateFormat = (d: Date) => {
   return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`.replace(/\n|\r/g, '');
 }
 
-class Counter extends React.Component<{}, Hoge>
+class Counter extends React.Component<{}, StateCounter>
 {
   constructor(props: any)
   {
     super(props);
-    const currentDate = new Date()
-    this.state = {
-      selectedDate: dateFormat(currentDate),
-      countPushUp: 0,
-      countAbdominalMuscles: 0,
-      countSquat: 0
-    } as Hoge
+    const currentDate = dateFormat(new Date())
+    const jsonState = localStorage.getItem(currentDate)
+    this.state = jsonState ? JSON.parse(jsonState) : makeInitailState(currentDate);
+  }
+
+  // LocalStorageに筋トレ結果を保存
+  save()
+  {
+    localStorage.setItem(this.state.selectedDate, JSON.stringify(this.state))
+  }
+
+  // 日付切り替え処理
+  switchDate(d: DateClickArg)
+  {
+    const jsonState = localStorage.getItem(d.dateStr)
+    const appState = jsonState ? JSON.parse(jsonState) as StateCounter : makeInitailState(d.dateStr);
+    this.setState(appState);
   }
 
   render()
@@ -49,7 +70,7 @@ class Counter extends React.Component<{}, Hoge>
           initialView="dayGridMonth" 
           locales={[jaLocale]}
           locale='ja'
-          dateClick={(arg) => this.setState({ selectedDate: arg.dateStr})}
+          dateClick={(arg) => this.switchDate(arg)}
         />
         <Stack direction="column" spacing={1} m={2}>
           <div>日付：{this.state.selectedDate}</div>
@@ -87,7 +108,7 @@ class Counter extends React.Component<{}, Hoge>
               >-1</Button>
             </ButtonGroup>
           </Stack>
-          <Button variant="contained" color="primary" onClick={() => alert('Todo: Save Methods')}>Save</Button>
+          <Button variant="contained" color="primary" onClick={() => this.save()}>Save</Button>
         </Stack>
       </div>
     );
