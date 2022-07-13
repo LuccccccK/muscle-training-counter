@@ -59,10 +59,36 @@ Resources:
                 - ''
                 - - 'origin-access-identity/cloudfront/'
                   - !Ref OAI
+          - DomainName: !Join 
+              - ''
+              - - !ImportValue MtcCfnApi-ApiGatewayId
+                - ".execute-api.ap-northeast-1.amazonaws.com"
+            Id: "ApiGatewayOrigin"
+            OriginPath: "/v1"
+            CustomOriginConfig:
+              OriginProtocolPolicy: "https-only"
         Enabled: true
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - HEAD
+              - OPTIONS
+            TargetOriginId: ApiGatewayOrigin
+            ForwardedValues: 
+              QueryString: false
+            PathPattern: "api/*"
+            ViewerProtocolPolicy: redirect-to-https
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
+            # - POST
+            # - PUT
+            # - PATCH
+            # - DELETE
             - HEAD
             - OPTIONS
           TargetOriginId: S3bucketForOrigin

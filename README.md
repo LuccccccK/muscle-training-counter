@@ -19,12 +19,13 @@ aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/
 ## ToDo
 
 - Environment
-  - CI/CD
-  - Backend(Database - DynamoDB / API Gateway / Lambda - Java)
+  - CI/CD(Frontend)
+  - CI/CD(Backend)
 - Framework
   - Login
   - API call
-- 機能面
+  - UnitTest
+- 機能面（フロントエンド）
   - 記録した回数の合計（月毎／全部）の表示
   - Logo 変更
   - カレンダーの見切れ
