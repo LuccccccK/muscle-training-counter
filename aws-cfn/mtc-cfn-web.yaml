@@ -40,6 +40,24 @@ Resources:
             Principal:
               AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OAI}
             Resource: !Sub arn:aws:s3:::${S3BucketForOrigin}/*
+  # CloudFront Cache Policy Create
+  CloudFrontCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties: 
+      CachePolicyConfig: 
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        MinTTL: 1
+        Name: MtcCfCachePolicy
+        ParametersInCacheKeyAndForwardedToOrigin: 
+          CookiesConfig: 
+            CookieBehavior: none
+          EnableAcceptEncodingBrotli: false
+          EnableAcceptEncodingGzip: false
+          HeadersConfig: 
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: all
   # CloudFront Distribution Create
   CloudFrontDistribution:
     Type: 'AWS::CloudFront::Distribution'
@@ -78,8 +96,7 @@ Resources:
               - HEAD
               - OPTIONS
             TargetOriginId: ApiGatewayOrigin
-            ForwardedValues: 
-              QueryString: false
+            CachePolicyId: !Ref CloudFrontCachePolicy
             PathPattern: "api/*"
             ViewerProtocolPolicy: redirect-to-https
         DefaultCacheBehavior:
@@ -92,8 +109,7 @@ Resources:
             - HEAD
             - OPTIONS
           TargetOriginId: S3bucketForOrigin
-          ForwardedValues: 
-            QueryString: false
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         ViewerCertificate:
