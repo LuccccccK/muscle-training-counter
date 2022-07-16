@@ -55,9 +55,29 @@ Resources:
           EnableAcceptEncodingBrotli: false
           EnableAcceptEncodingGzip: false
           HeadersConfig: 
-            HeaderBehavior: none
+            HeaderBehavior: whitelist
+            Headers:
+              - Origin
+              - Access-Control-Request-Method
+              - Access-Control-Request-Headers
           QueryStringsConfig:
             QueryStringBehavior: all
+  # CloudFront Cache Policy Create
+  CloudFrontOriginRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties: 
+      OriginRequestPolicyConfig: 
+        Name: MtcCfOriginRequestPolicy
+        CookiesConfig: 
+          CookieBehavior: none
+        HeadersConfig: 
+          HeaderBehavior: whitelist
+          Headers:
+            - Origin
+            - Access-Control-Request-Method
+            - Access-Control-Request-Headers
+        QueryStringsConfig:
+          QueryStringBehavior: all
   # CloudFront Distribution Create
   CloudFrontDistribution:
     Type: 'AWS::CloudFront::Distribution'
@@ -97,15 +117,12 @@ Resources:
               - OPTIONS
             TargetOriginId: ApiGatewayOrigin
             CachePolicyId: !Ref CloudFrontCachePolicy
+            OriginRequestPolicyId: !Ref CloudFrontOriginRequestPolicy
             PathPattern: "api/*"
             ViewerProtocolPolicy: redirect-to-https
         DefaultCacheBehavior:
           AllowedMethods:
             - GET
-            # - POST
-            # - PUT
-            # - PATCH
-            # - DELETE
             - HEAD
             - OPTIONS
           TargetOriginId: S3bucketForOrigin

@@ -1,4 +1,5 @@
 import React from 'react';
+import Axios from 'axios';
 import {Stack, Button, ButtonGroup} from '@mui/material'
 
 // fullcalendar module import
@@ -43,14 +44,18 @@ class Counter extends React.Component<{}, StateCounter>
   {
     super(props);
     const currentDate = dateFormat(new Date())
-    const jsonState = localStorage.getItem(currentDate)
-    this.state = jsonState ? JSON.parse(jsonState) : makeInitailState(currentDate);
+    this.state = makeInitailState(currentDate);
+    
+    Axios.get("https://mtc.haba.link/api/result?selectedDate=" + currentDate).then((response) => {
+      this.setState(JSON.parse(response.data) as StateCounter);
+    });
   }
 
   // LocalStorageに筋トレ結果を保存
   save()
   {
     localStorage.setItem(this.state.selectedDate, JSON.stringify(this.state))
+    Axios.post("https://mtc.haba.link/api/result", this.state).then((response) => {});
   }
 
   // 日付切り替え処理
