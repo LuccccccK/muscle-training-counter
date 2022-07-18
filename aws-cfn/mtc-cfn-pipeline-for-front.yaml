@@ -1,0 +1,148 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  # CI/CD IAM Role for CodeBuild Create
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+      Policies:
+        - PolicyName: CodeBuildAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
+              - Sid: S3Access
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                Resource:
+                  - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName ] ]
+                  - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName, "/*" ] ]
+  # CI/CD CodeBuild Create
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: MuscleTrainingCountFront
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        EnvironmentVariables:
+          - Name: S3_BUCKET
+            Value: !ImportValue MtcCfnWeb-BucketName
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yaml
+  # CI/CD CodePipeline Role Create
+  PipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+      Policies:
+        - PolicyName: CodePipelineAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: S3GetObject
+                Effect: Allow
+                Action: s3:*
+                Resource:
+                  - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName ] ]
+                  - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName, "/*" ] ]
+              - Sid: S3PutObject
+                Effect: Allow
+                Action: s3:*
+                Resource:
+                  - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName ] ]
+                  - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName, "/*" ] ]
+              - Sid: CodeBuild
+                Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                Resource: !Join
+                  - ''
+                  - - !Sub arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/
+                    - !Ref CodeBuildProject
+              - Sid: CodestarConnectionsUse
+                Effect: Allow
+                Action:
+                  - codestar-connections:UseConnection
+                  - codestar-connections:GetConnection
+                Resource: !Sub arn:aws:codestar-connections:${AWS::Region}:${AWS::AccountId}:connection/283445ef-8622-4a01-8795-8b714828d95b
+  # CI/CD CodePipeline Create
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: pipeline-muscle-training-counter
+      RoleArn: !GetAtt PipelineRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !ImportValue MtcCfnWeb-BucketName
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: DownloadSource
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: "1"
+                Provider: CodeStarSourceConnection
+              Configuration:
+                FullRepositoryId: "LuccccccK/muscle-training-counter"
+                ConnectionArn: !Sub arn:aws:codestar-connections:${AWS::Region}:${AWS::AccountId}:connection/283445ef-8622-4a01-8795-8b714828d95b
+                BranchName: "main"
+                DetectChanges: "true"
+              OutputArtifacts:
+                - Name: SourceOutput
+        - Name: Build
+          Actions:
+            - InputArtifacts:
+                - Name: SourceOutput
+              Name: Package
+              ActionTypeId:
+                Category: Build
+                Provider: CodeBuild
+                Owner: AWS
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+  # CI/CD CodePipeline Notification Create
+  PipelineNotificationRule:
+    Type: AWS::CodeStarNotifications::NotificationRule
+    Properties:
+      Name: pipeline-muscle-training-counter-front-notification-rule
+      DetailType: FULL
+      Resource: !Join [ '', [ 'arn:aws:codepipeline:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':', !Ref Pipeline ] ]
+      EventTypeIds:
+        - codepipeline-pipeline-pipeline-execution-succeeded
+        - codepipeline-pipeline-pipeline-execution-failed
+        - codepipeline-pipeline-pipeline-execution-canceled
+      Targets:
+        - TargetAddress: !ImportValue MtcCfnSns-SNSTopicName
+          TargetType: SNS

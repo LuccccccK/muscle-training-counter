@@ -50,3 +50,11 @@
     aws cloudformation create-stack --stack-name MtcCfnRoute53 --template-body file://mtc-cfn-route53.yaml
     # aws cloudformation delete-stack --stack-name MtcCfnRoute53
     ```
+
+1. Pipeline環境を構築
+
+    ```sh
+    aws cloudformation create-stack --stack-name MtcCfnPipelineForFront --template-body file://mtc-cfn-pipeline-for-front.yaml --capabilities CAPABILITY_NAMED_IAM
+    # aws cloudformation update-stack --stack-name MtcCfnPipelineForFront --template-body file://mtc-cfn-pipeline-for-front.yaml --capabilities CAPABILITY_NAMED_IAM
+    # aws cloudformation delete-stack --stack-name MtcCfnPipelineForFront
+    ```
