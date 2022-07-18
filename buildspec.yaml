@@ -3,11 +3,16 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Nothing to do in the pre_build phase...
+      - echo PreBuild started on `date`
       - npm install
   build:
     commands:
       - echo Build started on `date`
+      - npm run build
+      - aws s3 sync build/ s3://s3-mtc-haba-link/
   post_build:
     commands:
       - echo Build completed on `date`
+      - export DISTRIBUTION_ID=`aws cloudfront list-distributions | jq -r '.DistributionList.Items[0].Id'`
+      - echo $DISTRIBUTION_ID
+      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"

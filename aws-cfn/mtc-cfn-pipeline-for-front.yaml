@@ -34,6 +34,12 @@ Resources:
                 Resource:
                   - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName ] ]
                   - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName, "/*" ] ]
+              - Sid: CloudFrontCacheClear
+                Effect: Allow
+                Action:
+                  - cloudfront:CreateInvalidation
+                Resource:
+                  - !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/*
   # CI/CD CodeBuild Create
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
