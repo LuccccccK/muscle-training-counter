@@ -43,7 +43,7 @@ Resources:
                   - cloudfront:ListDistributions
                   - cloudfront:CreateInvalidation
                 Resource:
-                  - !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/*
+                  - "*"
   # CI/CD CodeBuild Create
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
