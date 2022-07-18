@@ -29,14 +29,14 @@ Resources:
                 Effect: Allow
                 Action:
                   - s3:PutObject
-                  - s3:GetObject
-                  - s3:GetObjectVersion
+                  - s3:ListObjectsV2
                 Resource:
                   - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName ] ]
                   - !Join [ '', [ "arn:aws:s3:::", !ImportValue MtcCfnWeb-BucketName, "/*" ] ]
               - Sid: CloudFrontCacheClear
                 Effect: Allow
                 Action:
+                  - cloudfront:ListDistributions
                   - cloudfront:CreateInvalidation
                 Resource:
                   - !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/*
