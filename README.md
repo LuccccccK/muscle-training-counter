@@ -20,11 +20,10 @@ aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/
 
 - Environment
   - CI/CD(Frontend)
-  - CI/CD(Backend)
 - Framework
   - Login
-  - API call
   - UnitTest
+  - Security (Backend)
 - 機能面（フロントエンド）
   - 記録した回数の合計（月毎／全部）の表示
   - Logo 変更

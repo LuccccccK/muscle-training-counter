@@ -43,27 +43,32 @@ class Counter extends React.Component<{}, StateCounter>
   constructor(props: any)
   {
     super(props);
-    const currentDate = dateFormat(new Date())
+    const currentDate = dateFormat(new Date());
     this.state = makeInitailState(currentDate);
-    
+  }
+
+  componentDidMount()
+  {
+    const currentDate = dateFormat(new Date());
     Axios.get("https://mtc.haba.link/api/result?selectedDate=" + currentDate).then((response) => {
-      this.setState(JSON.parse(response.data) as StateCounter);
+      const appState = response.data ? response.data as StateCounter : makeInitailState(currentDate);
+      this.setState(appState);
     });
   }
 
   // LocalStorageに筋トレ結果を保存
   save()
   {
-    localStorage.setItem(this.state.selectedDate, JSON.stringify(this.state))
     Axios.post("https://mtc.haba.link/api/result", this.state).then((response) => {});
   }
 
   // 日付切り替え処理
   switchDate(d: DateClickArg)
   {
-    const jsonState = localStorage.getItem(d.dateStr)
-    const appState = jsonState ? JSON.parse(jsonState) as StateCounter : makeInitailState(d.dateStr);
-    this.setState(appState);
+    Axios.get("https://mtc.haba.link/api/result?selectedDate=" + d.dateStr).then((response) => {
+      const appState = response.data ? response.data as StateCounter : makeInitailState(d.dateStr);
+      this.setState(appState);
+    });
   }
 
   render()
