@@ -1,6 +1,6 @@
 import React from 'react';
 import Axios from 'axios';
-import {Stack, Button, ButtonGroup} from '@mui/material'
+import {Stack, Button, ButtonGroup, Backdrop, CircularProgress} from '@mui/material'
 
 // fullcalendar module import
 import FullCalendar from '@fullcalendar/react';
@@ -11,21 +11,26 @@ import jaLocale from '@fullcalendar/core/locales/ja';
 import logo from './logo.svg';
 import './App.css';
 
-// Counter Classで利用するState 定義
-interface StateCounter {
+interface CounterResult {
   selectedDate: string
   countPushUp: number
   countAbdominalMuscles: number
   countSquat: number
 }
 
+// Counter Classで利用するState 定義
+interface CounterState extends CounterResult{
+  isOpenSpinner: boolean
+}
+
 const makeInitailState = (d: string) => {
   return {
+    isOpenSpinner: true,
     selectedDate: d,
     countPushUp: 0,
     countAbdominalMuscles: 0,
-    countSquat: 0
-  } as StateCounter
+    countSquat: 0,
+  } as CounterState
 }
 
 const App = () => {
@@ -38,7 +43,7 @@ const dateFormat = (d: Date) => {
   return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`.replace(/\n|\r/g, '');
 }
 
-class Counter extends React.Component<{}, StateCounter>
+class Counter extends React.Component<{}, CounterState>
 {
   constructor(props: any)
   {
@@ -51,7 +56,8 @@ class Counter extends React.Component<{}, StateCounter>
   {
     const currentDate = dateFormat(new Date());
     Axios.get("https://mtc.haba.link/api/result?selectedDate=" + currentDate).then((response) => {
-      const appState = response.data ? response.data as StateCounter : makeInitailState(currentDate);
+      const appState = response.data ? response.data as CounterState : makeInitailState(currentDate);
+      appState.isOpenSpinner = false;
       this.setState(appState);
     });
   }
@@ -59,14 +65,25 @@ class Counter extends React.Component<{}, StateCounter>
   // LocalStorageに筋トレ結果を保存
   save()
   {
-    Axios.post("https://mtc.haba.link/api/result", this.state).then((response) => {});
+    this.setState({ isOpenSpinner: true });
+    const body = {
+      selectedDate: this.state.selectedDate,
+      countAbdominalMuscles: this.state.countAbdominalMuscles,
+      countPushUp: this.state.countPushUp,
+      countSquat: this.state.countSquat
+    } as CounterResult
+    Axios.post("https://mtc.haba.link/api/result", body).then((response) => {
+      this.setState({ isOpenSpinner: false });
+    });
   }
 
   // 日付切り替え処理
   switchDate(d: DateClickArg)
   {
+    this.setState({ isOpenSpinner: true });
     Axios.get("https://mtc.haba.link/api/result?selectedDate=" + d.dateStr).then((response) => {
-      const appState = response.data ? response.data as StateCounter : makeInitailState(d.dateStr);
+      const appState = response.data ? response.data as CounterState : makeInitailState(d.dateStr);
+      appState.isOpenSpinner = false;
       this.setState(appState);
     });
   }
@@ -75,6 +92,12 @@ class Counter extends React.Component<{}, StateCounter>
   {
     return (
       <div>
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={this.state.isOpenSpinner}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]} // 日付単位での表示、日付に対するinteraction実現
           initialView="dayGridMonth" 
