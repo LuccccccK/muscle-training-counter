@@ -10,6 +10,7 @@ import jaLocale from '@fullcalendar/core/locales/ja';
 
 import logo from './logo.svg';
 import './App.css';
+import dateFormat from './utility/date';
 
 interface CounterResult {
   selectedDate: string
@@ -35,12 +36,6 @@ const makeInitailState = (d: string) => {
 
 const App = () => {
   return <Counter />
-}
-
-// Todo: Utility化
-// yyyy-mm-dd形式の文字列を返す
-const dateFormat = (d: Date) => {
-  return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`.replace(/\n|\r/g, '');
 }
 
 class Counter extends React.Component<{}, CounterState>
