@@ -13,6 +13,8 @@ import jaLocale from '@fullcalendar/core/locales/ja';
 // Import Utility
 import dateFormat from './../utility/date';
 
+import './Register.css';
+
 interface CounterResult {
   selectedDate: string
   countPushUp: number
@@ -44,8 +46,7 @@ class RegisterComponent extends React.Component<{}, CounterState>
   constructor(props: any)
   {
     super(props);
-    const currentDate = dateFormat(new Date());
-    this.state = makeInitailState(currentDate);
+    this.state = makeInitailState(dateFormat(new Date()));
   }
 
   componentDidMount()
@@ -76,6 +77,15 @@ class RegisterComponent extends React.Component<{}, CounterState>
   // 日付切り替え処理
   switchDate(d: DateClickArg)
   {
+    // 日付押下時に選択した日付の背景色を切り替えるため、対象のclassNameを削除し、
+    // 今回押下された日付の要素にclassNameをaddして、背景色の切り替えを実現
+    // Fullcalendarの公式ドキュメントにも d.dayEl の Elementeに対し、
+    // 直接 Style (Background Color) を切り替えるサンプルコードがあったため、この方式を採用
+    Array.from(document.getElementsByClassName("date-selected")).forEach(e => {
+      e.classList.remove("date-selected");
+    });
+    d.dayEl.classList.add("date-selected");
+
     this.setState({ isOpenSpinner: true });
     Axios.get("https://mtc.haba.link/api/result?selectedDate=" + d.dateStr).then((response) => {
       const appState = response.data ? response.data as CounterState : makeInitailState(d.dateStr);
