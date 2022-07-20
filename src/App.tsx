@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material'
 import { AppRegistration, Summarize } from '@mui/icons-material';
 
-import logo from './logo.svg';
 import './App.css';
 
 // Import Custom Component
