@@ -77,6 +77,12 @@ class RegisterComponent extends React.Component<{}, CounterState>
   // 日付切り替え処理
   switchDate(d: DateClickArg)
   {
+    const currentDate = new Date();
+    if (currentDate < d.date) {
+      alert("未来日は選択できません");
+      return;
+    }
+
     // 日付押下時に選択した日付の背景色を切り替えるため、対象のclassNameを削除し、
     // 今回押下された日付の要素にclassNameをaddして、背景色の切り替えを実現
     // Fullcalendarの公式ドキュメントにも d.dayEl の Elementeに対し、

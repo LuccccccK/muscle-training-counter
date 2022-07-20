@@ -26,5 +26,4 @@ aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/
   - CodePipelineでの通知メールをカスタム
 - 機能面（フロントエンド）
   - Summary: 記録した回数の合計（月毎／全部）の表示
-  - Register: 未来日は選択不可とする
   - index: アプリのアップデート表示をダイアログ化
