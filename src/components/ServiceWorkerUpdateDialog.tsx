@@ -25,12 +25,12 @@ export const SWUpdateDialog: React.FC<{ registration: ServiceWorkerRegistration 
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        {"Use Google's location service?"}
+        {"アプリ バージョン更新のお知らせ"}
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Let Google help apps determine location. This means sending anonymous
-          location data to Google, even when no apps are running.
+          MTC - Muscle Training Count アプリのバージョンが更新されました
+          更新を反映するため、「Upadte」ボタンを押下してください
         </DialogContentText>
       </DialogContent>
       <DialogActions>
