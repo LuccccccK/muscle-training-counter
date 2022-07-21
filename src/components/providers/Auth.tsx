@@ -4,7 +4,7 @@ import React from 'react';
 // propertyとして一旦Googleの認証結果を格納するcredentialのみで仮実装
 export type AuthContextType = {
   credential: String;
-  signin: (credential: String) => void;
+  signin: (credential: String, callback: () => void) => void;
   signout: (callback:() => void) => void;
 }
 
@@ -24,8 +24,9 @@ export const AuthProvider = (props: Props) => {
   const [credential, setCredential] = React.useState<String>("");
 
   // todo: signin後にリダイレクトが必要
-  const signin = (credential: String) => {
+  const signin = (credential: String, callback: () => void) => {
     setCredential(credential);
+    callback();
   }
 
   const signout = (callback: () => void) => {

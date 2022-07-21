@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 // Import OAuth (Google) Module
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google';
@@ -12,10 +13,13 @@ export const Login = () => {
   // React Hook がまだあまり理解できていないが、const定義しないと、
   // useAuthContext() を呼び出せない。
   const auth: AuthContextType = useAuthContext();
+  const navigate: NavigateFunction = useNavigate();
 
   const onSuccess = (response: CredentialResponse) => {
     console.log('CredentialResponse.credential: ' + response.credential);
-    auth.signin(response.credential ? response.credential : "");
+    auth.signin(response.credential ? response.credential : "", () => {
+      navigate("/");
+    });
   }
 
   const onError = () => {
