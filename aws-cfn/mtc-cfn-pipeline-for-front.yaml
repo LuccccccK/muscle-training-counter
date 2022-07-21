@@ -44,6 +44,12 @@ Resources:
                   - cloudfront:CreateInvalidation
                 Resource:
                   - "*"
+              - Sid: SSMParameterAccess
+                Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - "*"
   # CI/CD CodeBuild Create
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
