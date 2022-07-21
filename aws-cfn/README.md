@@ -58,3 +58,12 @@
     # aws cloudformation update-stack --stack-name MtcCfnPipelineForFront --template-body file://mtc-cfn-pipeline-for-front.yaml --capabilities CAPABILITY_NAMED_IAM
     # aws cloudformation delete-stack --stack-name MtcCfnPipelineForFront
     ```
+
+1. パラメータストアに環境変数をセット
+
+    ```sh
+    aws ssm put-parameter \
+        --name "google-client-id" \
+        --value "[google-client-id]" \
+        --type "SecureString"
+    ```

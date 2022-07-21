@@ -1,5 +1,12 @@
 # README
 
+## Local Environment
+
+```sh
+# .env を誤ってコミットしないように除外
+git update-index --assume-unchanged .env
+```
+
 ## Commands
 
 ```sh

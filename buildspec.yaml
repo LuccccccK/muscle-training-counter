@@ -1,5 +1,8 @@
 version: 0.2
 
+env:
+  parameter-store:
+    GoogleClientId: "google-client-id"
 phases:
   install:
     commands:
@@ -12,6 +15,7 @@ phases:
     commands:
       - echo PreBuild started on `date`
       - npm install
+      - sed -e s/{google-client-id}/${GoogleClientId}/ .env.replace > .env
   build:
     commands:
       - echo Build started on `date`
