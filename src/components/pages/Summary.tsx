@@ -1,6 +1,8 @@
 import React from 'react';
 import Axios from 'axios';
 
+import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 // Import MUI
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
 import { Paper } from '@mui/material'
@@ -41,33 +43,50 @@ class SummaryComponent extends React.Component<{}, SummaryState>
 
   render() {
     return (
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 350 }} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>日付</TableCell>
-              <TableCell align="right">腕立て伏せ</TableCell>
-              <TableCell align="right">腹筋</TableCell>
-              <TableCell align="right">スクワット</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.state.results.map((row) => (
-              <TableRow
-                key={row.selectedDate}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.selectedDate}
-                </TableCell>
-                <TableCell align="right">{row.countPushUp}</TableCell>
-                <TableCell align="right">{row.countAbdominalMuscles}</TableCell>
-                <TableCell align="right">{row.countSquat}</TableCell>
+      <div>
+        <BarChart
+          width={375}
+          height={300}
+          data={this.state.results}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="selectedDate" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="countPushUp" name="腕立て伏せ" stackId="a" fill="#8884d8" />
+          <Bar dataKey="countAbdominalMuscles" name="腹筋" stackId="a" fill="#82ca9d" />
+          <Bar dataKey="countSquat" name="スクワット" stackId="a" fill="#82ca9d" />
+        </BarChart>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 350 }} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>日付</TableCell>
+                <TableCell align="right">腕立て伏せ</TableCell>
+                <TableCell align="right">腹筋</TableCell>
+                <TableCell align="right">スクワット</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {this.state.results.map((row) => (
+                <TableRow
+                  key={row.selectedDate}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.selectedDate}
+                  </TableCell>
+                  <TableCell align="right">{row.countPushUp}</TableCell>
+                  <TableCell align="right">{row.countAbdominalMuscles}</TableCell>
+                  <TableCell align="right">{row.countSquat}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
     )
   }
 }
