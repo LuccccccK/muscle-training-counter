@@ -1,8 +1,8 @@
 // Import Router Component
-import { BrowserRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // Import UI Component
-import { Paper, BottomNavigation, BottomNavigationAction, Box } from '@mui/material'
+import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material'
 import { AppRegistration, Summarize } from '@mui/icons-material';
 
 // FunctionComponent Props 定義

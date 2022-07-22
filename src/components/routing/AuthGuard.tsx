@@ -18,7 +18,7 @@ export const RouteAuthGuard = (props: Props) => {
   const credential = useAuthContext().credential;
 
   // todo: 認証済みかどうかの判定は、credentialの有無で判断は危険
-  if ( credential == "" ) {
+  if ( credential === "" ) {
     return <Navigate to="/login" />
   }
   return (
