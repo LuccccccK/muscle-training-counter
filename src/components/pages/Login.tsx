@@ -9,7 +9,7 @@ import { Lock } from '@mui/icons-material';
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 // Import Provider Component
-import { AuthContextType, useAuthContext } from './providers/index'
+import { AuthContextType, useAuthContext } from './../providers/index'
 
 const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID ? process.env.REACT_APP_GOOGLE_CLIENT_ID : "";
 

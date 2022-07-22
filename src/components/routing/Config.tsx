@@ -3,9 +3,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { RouteAuthGuard } from "./AuthGuard";
 
 // Import Custom Component
-import { Login } from './../Login';
-import Register from './../Register';
-import Summary from './../Summary';
+import { Login } from './../pages/Login';
+import Register from '../pages/Register';
+import Summary from '../pages/Summary';
 
 import { AuthProvider } from './../providers/Auth';
 

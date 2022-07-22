@@ -11,7 +11,7 @@ import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import jaLocale from '@fullcalendar/core/locales/ja'; 
 
 // Import Utility
-import dateFormat from './../utility/date';
+import dateFormat from '../../utility/date';
 
 import './Register.css';
 
