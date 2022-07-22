@@ -1,6 +1,10 @@
 import React from 'react';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
+// Import UI Component
+import { Box, Grid, Paper, Avatar, Typography } from '@mui/material'
+import { Lock } from '@mui/icons-material';
+
 // Import OAuth (Google) Module
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
@@ -27,11 +31,27 @@ export const Login = () => {
   }
 
   return (
-    <GoogleOAuthProvider clientId={ googleClientId }>
-      <GoogleLogin
-        onSuccess={ onSuccess }
-        onError={ onError }
-      />
-    </GoogleOAuthProvider>
+    <Paper elevation={3} sx={{ p: 4, height: "70vh", width: "280px", m: "20px auto" }}>
+      <Grid
+        container
+        direction="column"
+        alignItems="center"
+      >
+        <Avatar>
+          <Lock />
+        </Avatar>
+        <Typography variant={"h5"} sx={{ m: "30px" }}>
+          Sign In
+        </Typography>
+        <Box mt={3}>
+          <GoogleOAuthProvider clientId={ googleClientId }>
+            <GoogleLogin
+              onSuccess={ onSuccess }
+              onError={ onError }
+            />
+          </GoogleOAuthProvider>
+        </Box>
+      </Grid>
+    </Paper>
   )
 }
