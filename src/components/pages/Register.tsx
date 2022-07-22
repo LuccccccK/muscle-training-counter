@@ -2,7 +2,7 @@ import React from 'react';
 import Axios from 'axios';
 
 // Import MUI
-import { Stack, Button, ButtonGroup, Backdrop, CircularProgress } from '@mui/material'
+import { Box, Stack, Button, ButtonGroup, Backdrop, CircularProgress } from '@mui/material'
 
 // Import Fullcalendar Module
 import FullCalendar from '@fullcalendar/react';
@@ -103,7 +103,7 @@ class RegisterComponent extends React.Component<{}, CounterState>
   render()
   {
     return (
-      <div>
+      <Box sx={{ pb: 7 }}>
         <Backdrop
           sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={this.state.isOpenSpinner}
@@ -156,7 +156,7 @@ class RegisterComponent extends React.Component<{}, CounterState>
           </Stack>
           <Button variant="contained" color="primary" onClick={() => this.save()}>Save</Button>
         </Stack>
-      </div>
+      </Box>
     );
   }
 }
