@@ -1,10 +1,13 @@
 import React from 'react';
+import { extractEmail } from './../../utility/jwt'
+
+const allowedEmails = process.env.REACT_APP_ALLOWED_EMAILS ? process.env.REACT_APP_ALLOWED_EMAILS : "";
 
 // 認証情報を持つContextのTypeを指定
 // propertyとして一旦Googleの認証結果を格納するcredentialのみで仮実装
 export type AuthContextType = {
-  credential: String;
-  signin: (credential: String, callback: () => void) => void;
+  credential: string;
+  signin: (credential: string, callback: (ok: boolean) => void) => void;
   signout: (callback:() => void) => void;
 }
 
@@ -19,14 +22,15 @@ type Props = {
 }
 
 // AuthContextType の実装
-// todo: signin / signout 処理が未実装
+// todo: signout 処理が未実装
 export const AuthProvider = (props: Props) => {
-  const [credential, setCredential] = React.useState<String>("");
+  const [credential, setCredential] = React.useState<string>("");
 
-  // todo: signin後にリダイレクトが必要
-  const signin = (credential: String, callback: () => void) => {
+  const signin = (credential: string, callback: (ok: boolean) => void) => {
+    const email = extractEmail(credential);
+    const allowed = allowedEmails.split(',');
     setCredential(credential);
-    callback();
+    callback(allowed.includes(email));
   }
 
   const signout = (callback: () => void) => {

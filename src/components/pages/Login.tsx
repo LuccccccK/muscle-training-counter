@@ -20,9 +20,12 @@ export const Login = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const onSuccess = (response: CredentialResponse) => {
-    console.log('CredentialResponse.credential: ' + response.credential);
-    auth.signin(response.credential ? response.credential : "", () => {
-      navigate("/");
+    auth.signin(response.credential ? response.credential : "", (ok: boolean) => {
+      if (ok) {
+        navigate("/");
+      } else {
+        alert('許可されていないユーザです');
+      }
     });
   }
 
