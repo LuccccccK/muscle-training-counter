@@ -66,4 +66,9 @@
         --name "google-client-id" \
         --value "[google-client-id]" \
         --type "SecureString"
+
+    aws ssm put-parameter \
+        --name "allowed-emails" \
+        --value "[allowed-emails]" \
+        --type "SecureString"
     ```

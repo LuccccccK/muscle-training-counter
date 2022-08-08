@@ -3,6 +3,7 @@ version: 0.2
 env:
   parameter-store:
     GoogleClientId: "google-client-id"
+    AllowedEmails: "allowed-emails"
 phases:
   install:
     commands:
@@ -16,6 +17,8 @@ phases:
       - echo PreBuild started on `date`
       - npm install
       - sed -e s/{google-client-id}/${GoogleClientId}/ .env.replace > .env
+      - sed -e s/{allowed-emails}/${AllowedEmails}/ .env.replace >> .env
+      - cat .env
   build:
     commands:
       - echo Build started on `date`
