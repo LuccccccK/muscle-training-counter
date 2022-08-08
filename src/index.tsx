@@ -5,15 +5,19 @@ import { App } from './App';
 import { SWUpdateDialog } from './components/ServiceWorkerUpdateDialog';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import { store } from './redux/store'
+import { Provider } from 'react-redux'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    {/* アプリ更新時にServiceWorkerスレッドを強制的に更新するトリガー用のダイアログ表示用DOM */}
-    <div className="SW-update-dialog"></div>
-    <App />
+    <Provider store={store}>
+      {/* アプリ更新時にServiceWorkerスレッドを強制的に更新するトリガー用のダイアログ表示用DOM */}
+      <div className="SW-update-dialog"></div>
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 
