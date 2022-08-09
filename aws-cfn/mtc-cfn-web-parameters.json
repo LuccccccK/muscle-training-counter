@@ -1,6 +1,10 @@
 [
     {
         "ParameterKey": "CertificateARN",
-        "ParameterValue": "arn:aws:acm:us-east-1:530421169424:certificate/fbcc8069-3e8e-4738-88b2-d4263693ce3f"
-    }
+        "ParameterValue": "arn:aws:acm:us-east-1:999999999999:certificate/xxx"
+    },
+    {
+      "ParameterKey": "NestjsApiGatewayId",
+      "ParameterValue": "xxx"
+  }
 ]

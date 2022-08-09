@@ -3,6 +3,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   CertificateARN:
     Type: String
+  NestjsApiGatewayId:
+    Type: String
 
 Resources:
   # CloudFront Origin Access Identity
@@ -93,11 +95,13 @@ Resources:
                 - ''
                 - - 'origin-access-identity/cloudfront/'
                   - !Ref OAI
-          - DomainName: !Join 
-              - ''
-              - - !ImportValue MtcCfnApi-ApiGatewayId
-                - ".execute-api.ap-northeast-1.amazonaws.com"
+          - DomainName: !Join [ '', [ !ImportValue MtcCfnApi-ApiGatewayId, ".execute-api.", !Ref 'AWS::Region', ".amazonaws.com" ] ]
             Id: "ApiGatewayOrigin"
+            OriginPath: "/v1"
+            CustomOriginConfig:
+              OriginProtocolPolicy: "https-only"
+          - DomainName: !Join [ '', [ !Sub NestjsApiGatewayId, ".execute-api.", !Ref 'AWS::Region', ".amazonaws.com" ] ]
+            Id: "NestApiGatewayOrigin"
             OriginPath: "/v1"
             CustomOriginConfig:
               OriginProtocolPolicy: "https-only"
@@ -115,6 +119,19 @@ Resources:
             CachePolicyId: !Ref CloudFrontCachePolicy
             OriginRequestPolicyId: !Ref CloudFrontOriginRequestPolicy
             PathPattern: "api/*"
+            ViewerProtocolPolicy: redirect-to-https
+          - AllowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - HEAD
+              - OPTIONS
+            TargetOriginId: NestApiGatewayOrigin
+            CachePolicyId: !Ref CloudFrontCachePolicy
+            OriginRequestPolicyId: !Ref CloudFrontOriginRequestPolicy
+            PathPattern: "nest-api/*"
             ViewerProtocolPolicy: redirect-to-https
         DefaultCacheBehavior:
           AllowedMethods:
