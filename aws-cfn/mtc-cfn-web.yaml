@@ -100,7 +100,7 @@ Resources:
             OriginPath: "/v1"
             CustomOriginConfig:
               OriginProtocolPolicy: "https-only"
-          - DomainName: !Join [ '', [ !Sub NestjsApiGatewayId, ".execute-api.", !Ref 'AWS::Region', ".amazonaws.com" ] ]
+          - DomainName: !Join [ '', [ !Sub "${NestjsApiGatewayId}.execute-api.", !Ref 'AWS::Region', ".amazonaws.com" ] ]
             Id: "NestApiGatewayOrigin"
             OriginPath: "/v1"
             CustomOriginConfig:
