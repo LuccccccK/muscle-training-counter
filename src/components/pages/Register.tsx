@@ -2,13 +2,12 @@ import React from 'react';
 import Axios from 'axios';
 
 // Import MUI
-import { Box, Stack, Button, ButtonGroup, Backdrop, CircularProgress } from '@mui/material'
+import { Box, Stack, Button, ButtonGroup, Backdrop, CircularProgress, Grid } from '@mui/material'
 
 // Import Fullcalendar Module
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
-import jaLocale from '@fullcalendar/core/locales/ja'; 
 
 // Import Utility
 import dateFormat from '../../utility/date';
@@ -113,15 +112,23 @@ class RegisterComponent extends React.Component<{}, CounterState>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]} // 日付単位での表示、日付に対するinteraction実現
           initialView="dayGridMonth" 
-          locales={[jaLocale]}
-          locale='ja'
           contentHeight={ 450 }
           dateClick={(arg) => this.switchDate(arg)}
         />
-        <Stack direction="column" spacing={1} m={2}>
-          <div>日付：{this.state.selectedDate}</div>
-          <Stack direction="row" spacing={2}>
-            <div>腕立て伏せ：{this.state.countPushUp}</div>
+        <Grid container spacing={1} m={1} alignItems="center">
+          <Grid item xs={4}>
+            <Box sx={{ textAlign: 'right' }}>日付：</Box>
+          </Grid>
+          <Grid item xs={8}>
+            <Box>{this.state.selectedDate}</Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box sx={{ textAlign: 'right' }}>腕立て伏せ：</Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box>{this.state.countPushUp}</Box>
+          </Grid>
+          <Grid item xs={6}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group">
               <Button 
                 onClick={() => this.setState({ countPushUp : this.state.countPushUp + 1})}
@@ -130,10 +137,14 @@ class RegisterComponent extends React.Component<{}, CounterState>
                 onClick={() => this.setState({ countPushUp : this.state.countPushUp - 1})}
               >-1</Button>
             </ButtonGroup>
-          </Stack>
-          <Stack direction="row" spacing={2}>
-            {/* Todo: 並べ方が汚い... Grid を使うとよさそう */}
-            <div>　　　腹筋：{this.state.countAbdominalMuscles}</div>
+          </Grid>
+          <Grid item xs={4}>
+            <Box sx={{ textAlign: 'right' }}>腹筋：</Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box>{this.state.countAbdominalMuscles}</Box>
+          </Grid>
+          <Grid item xs={6}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group">
               <Button 
                 onClick={() => this.setState({ countAbdominalMuscles : this.state.countAbdominalMuscles + 1})}
@@ -142,9 +153,14 @@ class RegisterComponent extends React.Component<{}, CounterState>
                 onClick={() => this.setState({ countAbdominalMuscles : this.state.countAbdominalMuscles - 1})}
               >-1</Button>
             </ButtonGroup>
-          </Stack>
-          <Stack direction="row" spacing={2}>
-            <div>スクワット：{this.state.countSquat}</div>
+          </Grid>
+          <Grid item xs={4}>
+            <Box sx={{ textAlign: 'right' }}>スクワット：</Box>
+          </Grid>
+          <Grid item xs={2}>
+            <Box>{this.state.countSquat}</Box>
+          </Grid>
+          <Grid item xs={6}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group">
               <Button 
                 onClick={() => this.setState({ countSquat : this.state.countSquat + 1})}
@@ -153,7 +169,9 @@ class RegisterComponent extends React.Component<{}, CounterState>
                 onClick={() => this.setState({ countSquat : this.state.countSquat - 1})}
               >-1</Button>
             </ButtonGroup>
-          </Stack>
+          </Grid>
+        </Grid>
+        <Stack direction="column" spacing={1} m={2}>
           <Button variant="contained" color="primary" onClick={() => this.save()}>Save</Button>
         </Stack>
       </Box>
