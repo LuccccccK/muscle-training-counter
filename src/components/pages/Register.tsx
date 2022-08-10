@@ -115,7 +115,7 @@ class RegisterComponent extends React.Component<{}, CounterState>
           initialView="dayGridMonth" 
           locales={[jaLocale]}
           locale='ja'
-          contentHeight={ 500 }
+          contentHeight={ 450 }
           dateClick={(arg) => this.switchDate(arg)}
         />
         <Stack direction="column" spacing={1} m={2}>
