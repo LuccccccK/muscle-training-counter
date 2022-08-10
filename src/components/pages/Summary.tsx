@@ -4,8 +4,10 @@ import Axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 // Import MUI
-import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
+import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell, TextField, TextFieldProps } from '@mui/material'
 import { Box, Paper } from '@mui/material'
+import { LocalizationProvider, DatePicker, MonthPicker } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 interface CounterResult {
   selectedDate: string
@@ -16,6 +18,7 @@ interface CounterResult {
 
 // Summary Classで利用するState 定義
 interface SummaryState {
+  selectedDate: Date,
   results: CounterResult[]
 }
 
@@ -28,15 +31,28 @@ class SummaryComponent extends React.Component<{}, SummaryState>
   constructor(props: any)
   {
     super(props);
+
     this.state = {
+      selectedDate: new Date(),
       results: []
     } as SummaryState
   }
 
   componentDidMount()
   {
-    const current = new Date();
-    const ym = current.getFullYear() + '-' + (current.getMonth() + 1).toString().padStart(2, "0");
+    this.fetchSummary(this.state.selectedDate);
+  }
+
+  handleChanged(value: Date | null)
+  {
+    if (value == null) { return; }
+    this.fetchSummary(value);
+    this.setState({selectedDate: value});
+  }
+
+  fetchSummary(selectedDate: Date)
+  {
+    const ym = selectedDate.getFullYear() + '-' + (selectedDate.getMonth() + 1).toString().padStart(2, "0")
     Axios.get("https://mtc.haba.link/nest-api/summary?ym=" + ym).then((response) => {
       let data = response.data as CounterResult[];
       data.map(e => {
@@ -65,6 +81,20 @@ class SummaryComponent extends React.Component<{}, SummaryState>
           <Bar dataKey="countAbdominalMuscles" name="腹筋" stackId="a" fill="#82ca9d" />
           <Bar dataKey="countSquat" name="スクワット" stackId="a" fill="#cc7c5e" />
         </BarChart>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Box sx={{ m: 2 }}>
+            <DatePicker
+              label="年月"
+              value={this.state.selectedDate}
+              onChange={(value) => this.handleChanged(value)}
+              views={['year', 'month']}
+              inputFormat='yyyy/MM'
+              toolbarFormat='yyyy/MM'
+              mask='____/__'
+              renderInput={(params: TextFieldProps) => <TextField {...params} />}
+            />
+          </Box>
+        </LocalizationProvider>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 350 }} size="small" aria-label="a dense table">
             <TableHead>
