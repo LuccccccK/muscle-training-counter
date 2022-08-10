@@ -1,11 +1,11 @@
 import React from 'react';
 import Axios from 'axios';
 
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 // Import MUI
 import { TableContainer, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material'
-import { Paper } from '@mui/material'
+import { Box, Paper } from '@mui/material'
 
 interface CounterResult {
   selectedDate: string
@@ -35,15 +35,21 @@ class SummaryComponent extends React.Component<{}, SummaryState>
 
   componentDidMount()
   {
-    // todo: ymを切り替えれるようにする
-    Axios.get("https://mtc.haba.link/nest-api/summary?ym=2022-08").then((response) => {
+    const current = new Date();
+    const ym = current.getFullYear() + '-' + (current.getMonth() + 1).toString().padStart(2, "0");
+    Axios.get("https://mtc.haba.link/nest-api/summary?ym=" + ym).then((response) => {
+      let data = response.data as CounterResult[];
+      data.map(e => {
+        const d = new Date(e.selectedDate);
+        e.selectedDate = (d.getMonth() + 1) + "/" + d.getDate();
+      })
       this.setState({results: response.data});
     });
   }
 
   render() {
     return (
-      <div>
+      <Box sx={{ pb: 7 }}>
         <BarChart
           width={375}
           height={300}
@@ -86,7 +92,7 @@ class SummaryComponent extends React.Component<{}, SummaryState>
             </TableBody>
           </Table>
         </TableContainer>
-      </div>
+      </Box>
     )
   }
 }
