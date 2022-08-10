@@ -35,8 +35,8 @@ class SummaryComponent extends React.Component<{}, SummaryState>
 
   componentDidMount()
   {
-    Axios.get("https://mtc.haba.link/api/summary").then((response) => {
-      console.log(response.data);
+    // todo: ymを切り替えれるようにする
+    Axios.get("https://mtc.haba.link/nest-api/summary?ym=2022-08").then((response) => {
       this.setState({results: response.data});
     });
   }
@@ -57,7 +57,7 @@ class SummaryComponent extends React.Component<{}, SummaryState>
           <Legend />
           <Bar dataKey="countPushUp" name="腕立て伏せ" stackId="a" fill="#8884d8" />
           <Bar dataKey="countAbdominalMuscles" name="腹筋" stackId="a" fill="#82ca9d" />
-          <Bar dataKey="countSquat" name="スクワット" stackId="a" fill="#82ca9d" />
+          <Bar dataKey="countSquat" name="スクワット" stackId="a" fill="#cc7c5e" />
         </BarChart>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 350 }} size="small" aria-label="a dense table">
