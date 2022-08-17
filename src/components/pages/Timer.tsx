@@ -1,5 +1,6 @@
 import { useTimer } from "react-timer-hook";
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Fab, Typography } from '@mui/material';
+import { Pause, PlayArrow, RestartAlt } from '@mui/icons-material';
 import { useEffect, useState } from "react";
 import useSound from 'use-sound';
 import Sound from '../../assets/Countdown02-1.mp3';
@@ -76,7 +77,7 @@ function MyTimer() {
   }, [seconds]);
 
   return (
-    <Box style={{ textAlign: "center" }}>
+    <Box style={{ textAlign: "center", margin: "50vh auto 0", transform: "translateY(-50%)" }}>
       <Typography variant="h1" component="h2">
         {seconds}
       </Typography>
@@ -86,22 +87,26 @@ function MyTimer() {
       <Typography variant="body1">
         {isRunning ? "Running: " + counter + " set" : "Not running"}
       </Typography>
-      <Button onClick={() => {
-        setIsActivate(true)
-        start();
-      }}>
-        Start
-      </Button>
-      <Button onClick={pause}>Pause</Button>
-      <Button onClick={resume}>Resume</Button>
-      {/* Restart ボタンは一度Startボタンを押下して、Activateされた状態にのみ利用可能とする */}
-      <Button onClick={() => {
-        setMode('before')
-        setCounter(1);
-        restart(getDateForTimer(startbufferTimerSeconds)) 
-      }} disabled={!isActivate}>
-        Restart
-      </Button>
+      <Box sx={{ '& > :not(style)': { m: 1 } }}>
+        <Fab variant="extended" onClick={() => {
+            setIsActivate(true)
+            start();
+        }}>
+          <PlayArrow />
+        </Fab>
+        <Fab variant="extended" onClick={pause}>
+          <Pause />
+        </Fab>
+        <Fab variant="extended" onClick={resume}>Resume</Fab>
+        {/* Restart ボタンは一度Startボタンを押下して、Activateされた状態にのみ利用可能とする */}
+        <Fab variant="extended" onClick={() => {
+          setMode('before')
+          setCounter(1);
+          restart(getDateForTimer(startbufferTimerSeconds)) 
+        }} disabled={!isActivate}>
+          <RestartAlt />
+        </Fab>
+      </Box>
     </Box>
   );
 }
