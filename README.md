@@ -5,6 +5,9 @@
 ```sh
 # .env を誤ってコミットしないように除外
 git update-index --assume-unchanged .env
+
+# CloudFormation用のパラメータファイルに正規の値を入れた状態でコミットしないように除外
+git update-index --assume-unchanged aws-cfn/*.json
 ```
 
 ## Commands
@@ -26,9 +29,6 @@ aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/
 ## ToDo
 
 - Framework
-  - UnitTest
   - Security (Backend)
 - AWS
   - CodePipelineでの通知メールをカスタム
-- 機能面（フロントエンド）
-  - Summary: 記録した回数の合計（月毎／全部）の表示
