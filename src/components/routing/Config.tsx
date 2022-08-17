@@ -7,6 +7,7 @@ import { Login } from './../pages/Login';
 import Register from '../pages/Register';
 import Summary from '../pages/Summary';
 import Timer from "../pages/Timer";
+import Setting from "../pages/Setting";
 
 import { AuthProvider } from './../providers/Auth';
 
@@ -26,6 +27,9 @@ export const RouteConfig = () => {
           </Route>
           <Route path="/timer" element={
             <RouteAuthGuard component={<Timer />} />}>
+          </Route>
+          <Route path="/setting" element={
+            <RouteAuthGuard component={<Setting />} />}>
           </Route>
         </Routes>
       </AuthProvider>
