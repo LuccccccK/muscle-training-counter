@@ -6,6 +6,7 @@ import { RouteAuthGuard } from "./AuthGuard";
 import { Login } from './../pages/Login';
 import Register from '../pages/Register';
 import Summary from '../pages/Summary';
+import Timer from "../pages/Timer";
 
 import { AuthProvider } from './../providers/Auth';
 
@@ -22,6 +23,9 @@ export const RouteConfig = () => {
           </Route>  
           <Route path="/summary" element={
             <RouteAuthGuard component={<Summary />} />}>
+          </Route>
+          <Route path="/timer" element={
+            <RouteAuthGuard component={<Timer />} />}>
           </Route>
         </Routes>
       </AuthProvider>

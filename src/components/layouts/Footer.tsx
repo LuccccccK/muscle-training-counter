@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 // Import UI Component
 import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material'
-import { AppRegistration, Summarize } from '@mui/icons-material';
+import { AppRegistration, Summarize, Timer } from '@mui/icons-material';
 
 // FunctionComponent Props 定義
 type Props = {
@@ -30,6 +30,12 @@ export const Footer = (props: Props) => {
             icon={<Summarize />} 
             component={Link}
             to="/summary"
+          />
+          <BottomNavigationAction 
+            label="Timer" 
+            icon={<Timer />} 
+            component={Link}
+            to="/timer"
           />
         </BottomNavigation>
       </Paper>
