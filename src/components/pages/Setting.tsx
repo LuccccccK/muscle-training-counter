@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form'
 import Axios from "axios";
 import { Button, Stack, TextField } from "@mui/material";
 
@@ -13,7 +13,8 @@ interface SettingData {
 }
 
 const validationRules = {
-  name: { required: '名前を入力してください。' }
+  name: { required: '名前を入力してください。' },
+  trainings: { required: 'トレーニング名を入力してください。' }
 }
 
 const Setting = () => {
@@ -24,8 +25,14 @@ const Setting = () => {
 
   const { register, control, handleSubmit, reset, formState: { errors }} = useForm<SettingData>({})
 
+  // ネストされた項目を扱う場合には、useFieldArray を利用する
+  const { fields } = useFieldArray({
+    control,
+    name: "trainings",
+  });
+
   const onSubmit: SubmitHandler<SettingData> = (data: SettingData) => {
-    console.log(`submit: ${data.name}`)
+    Axios.put("http://localhost:3001/nest-api/setting", data);
   }
 
   // 初回レンダリング時のみ実行
@@ -53,6 +60,22 @@ const Setting = () => {
           />
         )}
       />
+      {
+        fields.map((e, index) => {
+          return (
+            <Controller key={e.name} name={`trainings.${index}.name`} defaultValue="" control={control} rules={validationRules.trainings}
+              render={({ field }) => (
+                <TextField type="text" label="トレーニング名"
+                  {...field}
+                  {...register(`trainings.${index}.name`)}
+                  error={(errors.trainings !== undefined ? errors.trainings[index]?.name : undefined) !== undefined}
+                  helperText={errors.trainings !== undefined ? errors.trainings[index]?.name?.message : null}
+                />
+              )}
+            />
+          )
+        })
+      }
       <Stack direction="column" spacing={1} m={2}>
         <Button variant="contained" color="primary" type="submit">Save</Button>
       </Stack>
