@@ -1,6 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import credentialReducer from './credential'
+import credentialReducer, { credentialState } from './credential'
+
+export interface IStore {
+  credential: credentialState
+}
 
 export const store = configureStore({
   reducer: {

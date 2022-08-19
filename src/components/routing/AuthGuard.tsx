@@ -3,12 +3,9 @@ import React from 'react';
 // Import Router Component
 import { Navigate } from "react-router-dom";
 
-// Import Provider Component
-import { useAuthContext } from './../providers'
-
 // Import Redux
 import { useSelector } from 'react-redux';
-import { credentialState } from './../../redux/credential';
+import { IStore } from '../../redux/store';
 
 // Import Layout
 import { Footer } from './../layouts/Footer'
@@ -20,7 +17,7 @@ type Props = {
 
 // props でRouting先のReactComponentを受け取って認証済みであれば、そのComponentを表示する
 export const RouteAuthGuard = (props: Props) => {
-  const credential = useSelector((state: credentialState) => state.credential);
+  const credential = useSelector((state: IStore) => state.credential.credential);
 
   // todo: 認証済みかどうかの判定は、credentialの有無で判断は危険
   if ( credential === "" ) {
