@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Axios, { AxiosRequestConfig } from 'axios';
 import { Box, Stack, Button, ButtonGroup, Backdrop, CircularProgress, Grid } from '@mui/material'
 import FullCalendar from '@fullcalendar/react';
@@ -38,6 +38,10 @@ const Register = () => {
   const [state, setState] = useState({} as CounterResult)
   const [trainings, setTrainings] = useState([] as Training[])
 
+  const increment = (i: number) => {
+    
+  };
+
   const credential = useSelector((state: IStore) => state.credential.credential);
   const config: AxiosRequestConfig = {
     headers: {
@@ -57,11 +61,11 @@ const Register = () => {
 
     const fetchSettingData = async () => {
       const setting = await Axios.get("http://localhost:3001/nest-api/setting", config)
-      const trainings: Training[] = []
-      setting.data.trainings.map((e: TrainingSetting) => {
-        trainings.push({
-          name: e.name
-        } as Training)
+      const trainings: Training[] = setting.data.trainings.map((e: TrainingSetting) => {
+        return {
+          name: e.name,
+          count: 0 // todo: 取得したデータをはめ込む必要あり
+        } as Training
       })
       setTrainings(trainings);
     }
@@ -130,22 +134,44 @@ const Register = () => {
         <Grid item xs={8}>
           <Box>{state.selectedDate}</Box>
         </Grid>
-        <Grid item xs={4}>
-          <Box sx={{ textAlign: 'right' }}>腕立て伏せ：</Box>
-        </Grid>
-        <Grid item xs={2}>
-          <Box>{state.countPushUp}</Box>
-        </Grid>
-        <Grid item xs={6}>
-          <ButtonGroup variant="contained" aria-label="outlined primary button group">
-            <Button 
-              onClick={() => console.log(state.countPushUp)}
-            >+1</Button>
-            <Button 
-              onClick={() => console.log(state.countPushUp)}
-            >-1</Button>
-          </ButtonGroup>
-        </Grid>
+        {
+          trainings.map((e, index) => {
+            return (
+              <Grid key={`training-${index}`} container spacing={1} m={0} alignItems="center">
+                <Grid item xs={4}>
+                  <Box sx={{ textAlign: 'right' }}>{e.name}：</Box>
+                </Grid>
+                <Grid item xs={2}>
+                  <Box>{e.count}</Box>
+                </Grid>
+                <Grid item xs={6}>
+                  <ButtonGroup variant="contained" aria-label="outlined primary button group">
+                    <Button 
+                      onClick={() => {
+                        setTrainings((prevState) => 
+                          prevState.map((e, i) => {
+                            if (i !== index) { return e; } // 更新対象ではない要素はそのままreturn
+                            return { ...e, count: e.count + 1 }
+                          })
+                        );
+                      }}
+                    >+1</Button>
+                    <Button 
+                      onClick={() => {
+                        setTrainings((prevState) => 
+                          prevState.map((e, i) => {
+                            if (i !== index) { return e; } // 更新対象ではない要素はそのままreturn
+                            return { ...e, count: e.count - 1 }
+                          })
+                        );
+                      }}
+                    >-1</Button>
+                  </ButtonGroup>
+                </Grid>
+              </Grid>
+            )
+          })
+        }
       </Grid>
       <Stack direction="column" spacing={1} m={2}>
         <Button variant="contained" color="primary" onClick={() => save()}>Save</Button>
