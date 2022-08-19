@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form'
-import Axios from "axios";
+import Axios, { AxiosRequestConfig } from "axios";
 import { Button, Stack, TextField } from "@mui/material";
+import { useSelector } from "react-redux";
+import { IStore } from "../../redux/store";
 
 interface TrainingSetting {
   name: string
@@ -31,14 +33,21 @@ const Setting = () => {
     name: "trainings",
   });
 
+  const credential = useSelector((state: IStore) => state.credential.credential);
+  const config: AxiosRequestConfig = {
+    headers: {
+      "Authorization": credential
+    }
+  }
+
   const onSubmit: SubmitHandler<SettingData> = (data: SettingData) => {
-    Axios.put("http://localhost:3001/nest-api/setting", data);
+    Axios.put("http://localhost:3001/nest-api/setting", data, config);
   }
 
   // 初回レンダリング時のみ実行
   useEffect(() => {
     const fetchData = async () => {
-      const result = await Axios.get("http://localhost:3001/nest-api/setting");
+      const result = await Axios.get("http://localhost:3001/nest-api/setting", config);
       setData(result.data);
     }
     fetchData();
