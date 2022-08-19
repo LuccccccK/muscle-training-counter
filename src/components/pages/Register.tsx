@@ -9,13 +9,6 @@ import './Register.css';
 import { useSelector } from 'react-redux';
 import { IStore } from '../../redux/store';
 
-interface CounterResult {
-  selectedDate: string
-  countPushUp: number
-  countAbdominalMuscles: number
-  countSquat: number
-}
-
 interface TrainingSetting {
   name: string
 }
@@ -24,23 +17,15 @@ interface Training extends TrainingSetting {
   count: number
 }
 
-const makeInitailState = (d: string) => {
-  return {
-    selectedDate: d,
-    countPushUp: 0,
-    countAbdominalMuscles: 0,
-    countSquat: 0,
-  } as CounterResult
+interface TrainingResult {
+  date: string
+  trainings: Training[]
 }
 
 const Register = () => {
   const [isOpenSpinner, setIsOpenSpinner] = useState(true);
-  const [state, setState] = useState({} as CounterResult)
+  const [date, setDate] = useState(new Date())
   const [trainings, setTrainings] = useState([] as Training[])
-
-  const increment = (i: number) => {
-    
-  };
 
   const credential = useSelector((state: IStore) => state.credential.credential);
   const config: AxiosRequestConfig = {
@@ -51,37 +36,35 @@ const Register = () => {
 
   // 初回レンダリング時に必要なデータを取得しセット
   useEffect(() => {
-    const currentDate = dateFormat(new Date());
-    const fetchResultData = async () => {
-      const result = await Axios.get("https://mtc.haba.link/api/result?selectedDate=" + currentDate);
-      const appState = result.data ? result.data as CounterResult : makeInitailState(currentDate);
-      setState(appState);
-    }
-    fetchResultData();
-
     const fetchSettingData = async () => {
       const setting = await Axios.get("http://localhost:3001/nest-api/setting", config)
       const trainings: Training[] = setting.data.trainings.map((e: TrainingSetting) => {
         return {
           name: e.name,
-          count: 0 // todo: 取得したデータをはめ込む必要あり
+          count: 0
         } as Training
       })
       setTrainings(trainings);
     }
     fetchSettingData()
+
+    const fetchResultData = async () => {
+      const result = await Axios.get("http://localhost:3001/nest-api/training-result?date=" + dateFormat(date), config);
+      // todo: 取得したデータをはめ込む必要あり
+    }
+    fetchResultData();
     
     setIsOpenSpinner(false);
   }, [])
 
   // 日付切り替え処理
-  const switchDate = (d: DateClickArg) => {
+  const switchDate = async (d: DateClickArg) => {
     const currentDate = new Date();
     if (currentDate < d.date) {
       alert("未来日は選択できません");
       return;
     }
-
+    
     // 日付押下時に選択した日付の背景色を切り替えるため、対象のclassNameを削除し、
     // 今回押下された日付の要素にclassNameをaddして、背景色の切り替えを実現
     // Fullcalendarの公式ドキュメントにも d.dayEl の Elementeに対し、
@@ -91,24 +74,26 @@ const Register = () => {
     });
     d.dayEl.classList.add("date-selected");
 
-    setIsOpenSpinner(true);
-    Axios.get("https://mtc.haba.link/api/result?selectedDate=" + d.dateStr).then((response) => {
-      const appState = response.data ? response.data as CounterResult : makeInitailState(d.dateStr);
-      setState(appState);
-      setIsOpenSpinner(false);
-    });
+    setDate(d.date);
   }
+
+  useEffect(() => {
+    setIsOpenSpinner(true);
+
+    const fetchResultData = async () => {
+      const result = await Axios.get("http://localhost:3001/nest-api/training-result?date=" + dateFormat(date), config);
+      // todo: 取得したデータをはめ込む必要あり
+    }
+    fetchResultData();
+    setIsOpenSpinner(false);
+  }, [date])
 
   // 筋トレ結果を保存
   const save = () => {
     setIsOpenSpinner(true);
-    const body = {
-      selectedDate: state.selectedDate,
-      countAbdominalMuscles: state.countAbdominalMuscles,
-      countPushUp: state.countPushUp,
-      countSquat: state.countSquat
-    } as CounterResult
-    Axios.post("https://mtc.haba.link/api/result", body).then((response) => {
+    const body = {} as TrainingResult
+    Axios.put("http://localhost:3001/nest-api/training-result", body, config)
+    .then((response) => {
       setIsOpenSpinner(false);
     });
   }
@@ -132,7 +117,7 @@ const Register = () => {
           <Box sx={{ textAlign: 'right' }}>日付：</Box>
         </Grid>
         <Grid item xs={8}>
-          <Box>{state.selectedDate}</Box>
+          <Box>{dateFormat(date)}</Box>
         </Grid>
         {
           trainings.map((e, index) => {
