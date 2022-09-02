@@ -91,7 +91,10 @@ const Register = () => {
   // 筋トレ結果を保存
   const save = () => {
     setIsOpenSpinner(true);
-    const body = {} as TrainingResult
+    const body = {
+      date: dateFormat(date),
+      trainings: trainings
+    } as TrainingResult
     Axios.put("http://localhost:3001/nest-api/training-result", body, config)
     .then((response) => {
       setIsOpenSpinner(false);
