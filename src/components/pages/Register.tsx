@@ -9,6 +9,11 @@ import './Register.css';
 import { useSelector } from 'react-redux';
 import { IStore } from '../../redux/store';
 
+interface Setting {
+  email: string
+  trainings: TrainingSetting[]
+}
+
 interface TrainingSetting {
   name: string
 }
@@ -34,28 +39,30 @@ const Register = () => {
     }
   }
 
-  // 初回レンダリング時に必要なデータを取得しセット
-  useEffect(() => {
-    const fetchSettingData = async () => {
-      const setting = await Axios.get("http://localhost:3001/nest-api/setting", config)
-      const trainings: Training[] = setting.data.trainings.map((e: TrainingSetting) => {
+  const fetcher = () => {
+    setIsOpenSpinner(true);
+
+    const fetch = async () => {
+      const setting = await Axios.get<Setting>("http://localhost:3001/nest-api/setting", config)
+      const result = await Axios.get<TrainingResult>("http://localhost:3001/nest-api/training-result?date=" + dateFormat(date), config);
+
+      const trainings: Training[] = setting.data.trainings.map((e) => {
+        const training = result.data.trainings.find((el) => el.name === e.name);
+        const count = (training !== undefined) ? training.count : 0;
         return {
           name: e.name,
-          count: 0
+          count: count
         } as Training
       })
       setTrainings(trainings);
     }
-    fetchSettingData()
+    fetch()
 
-    const fetchResultData = async () => {
-      const result = await Axios.get("http://localhost:3001/nest-api/training-result?date=" + dateFormat(date), config);
-      // todo: 取得したデータをはめ込む必要あり
-    }
-    fetchResultData();
-    
     setIsOpenSpinner(false);
-  }, [])
+  }
+
+  useEffect(fetcher, [])
+  useEffect(fetcher, [date])
 
   // 日付切り替え処理
   const switchDate = async (d: DateClickArg) => {
@@ -76,17 +83,6 @@ const Register = () => {
 
     setDate(d.date);
   }
-
-  useEffect(() => {
-    setIsOpenSpinner(true);
-
-    const fetchResultData = async () => {
-      const result = await Axios.get("http://localhost:3001/nest-api/training-result?date=" + dateFormat(date), config);
-      // todo: 取得したデータをはめ込む必要あり
-    }
-    fetchResultData();
-    setIsOpenSpinner(false);
-  }, [date])
 
   // 筋トレ結果を保存
   const save = () => {
