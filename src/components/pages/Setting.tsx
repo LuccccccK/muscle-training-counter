@@ -41,13 +41,13 @@ const Setting = () => {
   }
 
   const onSubmit: SubmitHandler<SettingData> = (data: SettingData) => {
-    Axios.put("http://localhost:3001/nest-api/setting", data, config);
+    Axios.put("https://mtc.haba.link/nest-api/setting", data, config);
   }
 
   // 初回レンダリング時のみ実行
   useEffect(() => {
     const fetchData = async () => {
-      const result = await Axios.get<SettingData>("http://localhost:3001/nest-api/setting", config);
+      const result = await Axios.get<SettingData>("https://mtc.haba.link/nest-api/setting", config);
       if (result.data.trainings.length < 1) {
         // todo: トレーニングの種類数を画面上から操作できるようにする
         result.data.trainings.push({} as SettingData)

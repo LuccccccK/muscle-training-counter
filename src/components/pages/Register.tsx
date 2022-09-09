@@ -43,8 +43,8 @@ const Register = () => {
     setIsOpenSpinner(true);
 
     const fetch = async () => {
-      const setting = await Axios.get<Setting>("http://localhost:3001/nest-api/setting", config)
-      const result = await Axios.get<TrainingResult>("http://localhost:3001/nest-api/training-result?date=" + dateFormat(date), config);
+      const setting = await Axios.get<Setting>("https://mtc.haba.link/nest-api/setting", config)
+      const result = await Axios.get<TrainingResult>("https://mtc.haba.link/nest-api/training-result?date=" + dateFormat(date), config);
 
       const trainings: Training[] = setting.data.trainings.map((e) => {
         const training = result.data.trainings.find((el) => el.name === e.name);
@@ -91,7 +91,7 @@ const Register = () => {
       date: dateFormat(date),
       trainings: trainings
     } as TrainingResult
-    Axios.put("http://localhost:3001/nest-api/training-result", body, config)
+    Axios.put("https://mtc.haba.link/nest-api/training-result", body, config)
     .then((response) => {
       setIsOpenSpinner(false);
     });
